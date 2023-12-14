@@ -1,0 +1,4 @@
+resource_group_name  = "tf_statefile_rg"
+storage_account_name = "tfstatefiletestthomas"
+container_name       = "tfstatefile"
+key                  = "terraform_dev.tfstate"
