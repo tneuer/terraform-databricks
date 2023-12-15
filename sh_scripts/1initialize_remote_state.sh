@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 source ./sh_scripts/variables.sh
 
 echo Deploying resource group $TF_RESOURCE_GROUP_NAME...

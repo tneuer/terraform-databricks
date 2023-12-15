@@ -8,14 +8,18 @@ variable "location" {
   }
 }
 
-variable "environment" {
-  type = string
-  validation {
-    condition     = contains(["dev", "prod"], lower(var.environment))
-    error_message = "Unsupported environement specified. Supported regions include: dev, prod"
-  }
-}
-
 variable "project" {
   type = string
+}
+
+variable "rg_name" {
+  type = string
+}
+
+variable "vnet_cidr_range" {
+  type = string
+}
+
+variable "tags" {
+  type = map(any)
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 source ./sh_scripts/variables.sh
 
 echo Creating service principal $GITHUB_TF_SP_NAME...

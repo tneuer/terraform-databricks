@@ -1,126 +1,110 @@
-locals {
-  tags = {
-    environment = var.environment
-    project     = var.project
-    source      = "terraform"
-  }
-}
-
-resource "azurerm_resource_group" "base_rg" {
-  name     = "terraform-test-resource"
-  location = var.location
-}
-
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_key_vault" "tfstatekv" {
-  name                = "tfstatekv"
-  resource_group_name = azurerm_resource_group.base_rg.name
+resource "azurerm_virtual_network" "vnet" {
+  name                = format("%s%s", "vnet-", var.project)
   location            = var.location
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  sku_name            = "standard"
+  resource_group_name = var.rg_name
+  address_space       = [var.vnet_cidr_range]
+  tags                = var.tags
 }
 
-data "azurerm_key_vault_secret" "linux_pwd" {
-  name         = "linux-pwd"
-  key_vault_id = azurerm_key_vault.tfstatekv.id
+resource "azurerm_network_security_group" "db-nsg" {
+  name                = format("%s%s", "db-nsg-", var.project)
+  location            = var.location
+  resource_group_name = var.rg_name
+  tags                = var.tags
 }
 
-resource "azurerm_virtual_network" "base_vn" {
-  name                = "terraform-test-network"
-  resource_group_name = azurerm_resource_group.base_rg.name
-  location            = azurerm_resource_group.base_rg.location
-  address_space       = ["10.0.0.0/16"]
-  tags                = local.tags
-}
-
-resource "azurerm_subnet" "base_subnet1" {
-  name                 = "subnet_1"
-  resource_group_name  = azurerm_resource_group.base_rg.name
-  virtual_network_name = azurerm_virtual_network.base_vn.name
-  address_prefixes     = ["10.0.1.0/24"]
-}
-
-resource "azurerm_subnet" "base_subnet2" {
-  name                 = "subnet_2"
-  resource_group_name  = azurerm_resource_group.base_rg.name
-  virtual_network_name = azurerm_virtual_network.base_vn.name
-  address_prefixes     = ["10.0.2.0/24"]
-}
-
-resource "azurerm_network_security_group" "nsg_test" {
-  name                = "test_nsg"
-  location            = azurerm_resource_group.base_rg.location
-  resource_group_name = azurerm_resource_group.base_rg.name
-  tags                = local.tags
-}
-
-resource "azurerm_network_security_rule" "nsr_test" {
-  name                        = "allow_my_IP"
-  priority                    = 1000
-  direction                   = "Inbound"
+resource "azurerm_network_security_rule" "aad" {
+  name                        = "AllowAAD"
+  priority                    = 200
+  direction                   = "Outbound"
   access                      = "Allow"
-  protocol                    = "*"
+  protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "77.59.128.10/32"
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.base_rg.name
-  network_security_group_name = azurerm_network_security_group.nsg_test.name
+  destination_port_range      = "443"
+  source_address_prefix       = "VirtualNetwork"
+  destination_address_prefix  = "AzureActiveDirectory"
+  resource_group_name         = var.rg_name
+  network_security_group_name = azurerm_network_security_group.db-nsg.name
 }
 
-resource "azurerm_subnet_network_security_group_association" "nsg_subnet_1" {
-  subnet_id                 = azurerm_subnet.base_subnet1.id
-  network_security_group_id = azurerm_network_security_group.nsg_test.id
+resource "azurerm_network_security_rule" "azfrontdoor" {
+  name                        = "AllowAzureFrontDoor"
+  priority                    = 201
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "443"
+  source_address_prefix       = "VirtualNetwork"
+  destination_address_prefix  = "AzureFrontDoor.Frontend"
+  resource_group_name         = var.rg_name
+  network_security_group_name = azurerm_network_security_group.db-nsg.name
 }
 
-resource "azurerm_public_ip" "public_ip_test" {
-  name                = "public_ip_test"
-  resource_group_name = azurerm_resource_group.base_rg.name
-  location            = azurerm_resource_group.base_rg.location
-  allocation_method   = "Dynamic"
-  tags                = local.tags
-}
+resource "azurerm_subnet" "db-public" {
+  name                 = format("%s%s", "db-public-subnet-", var.project)
+  resource_group_name  = var.rg_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = [cidrsubnet(var.vnet_cidr_range, 3, 0)]
 
-resource "azurerm_network_interface" "nic_test" {
-  name                = "nic_test"
-  location            = azurerm_resource_group.base_rg.location
-  resource_group_name = azurerm_resource_group.base_rg.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.base_subnet1.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.public_ip_test.id
-  }
-  tags = local.tags
-}
-
-resource "azurerm_linux_virtual_machine" "linux_vm_test" {
-  name                            = "linuxvmtest"
-  resource_group_name             = azurerm_resource_group.base_rg.name
-  location                        = azurerm_resource_group.base_rg.location
-  size                            = "Standard_B1s"
-  admin_username                  = "adminuser"
-  admin_password                  = data.azurerm_key_vault_secret.linux_pwd.value
-  disable_password_authentication = false
-  network_interface_ids = [
-    azurerm_network_interface.nic_test.id,
-  ]
-
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+  delegation {
+    name = "databricks"
+    service_delegation {
+      name = "Microsoft.Databricks/workspaces"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"
+      ]
+    }
   }
 }
 
-output "public_ip_address" {
-  value = "${azurerm_linux_virtual_machine.linux_vm_test.name}:${azurerm_linux_virtual_machine.linux_vm_test.public_ip_address}"
+resource "azurerm_subnet_network_security_group_association" "public" {
+  subnet_id                 = azurerm_subnet.db-public.id
+  network_security_group_id = azurerm_network_security_group.db-nsg.id
+}
+
+variable "private_subnet_endpoints" {
+  default = []
+}
+
+resource "azurerm_subnet" "db-private" {
+  name                 = format("%s%s", "db-private-subnet-", var.project)
+  resource_group_name  = var.rg_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = [cidrsubnet(var.vnet_cidr_range, 3, 1)]
+
+  private_endpoint_network_policies_enabled     = true
+  private_link_service_network_policies_enabled = true
+
+  delegation {
+    name = "databricks"
+    service_delegation {
+      name = "Microsoft.Databricks/workspaces"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"
+      ]
+    }
+  }
+
+  service_endpoints = var.private_subnet_endpoints
+}
+
+resource "azurerm_subnet_network_security_group_association" "private" {
+  subnet_id                 = azurerm_subnet.db-private.id
+  network_security_group_id = azurerm_network_security_group.db-nsg.id
+}
+
+
+resource "azurerm_subnet" "pl-subnet" {
+  name                                      = format("%s%s", "db-pl-subnet-", var.project)
+  resource_group_name                       = var.rg_name
+  virtual_network_name                      = azurerm_virtual_network.vnet.name
+  address_prefixes                          = [cidrsubnet(var.vnet_cidr_range, 3, 2)]
+  private_endpoint_network_policies_enabled = true
 }
