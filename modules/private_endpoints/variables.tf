@@ -10,7 +10,15 @@ variable "rg_name" {
   type = string
 }
 
-variable "vnet_cidr_range" {
+variable "pl_subnet_id" {
+  type = string
+}
+
+variable "vnet_id" {
+  type = string
+}
+
+variable "databricks_workspace_id" {
   type = string
 }
 

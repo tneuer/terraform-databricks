@@ -2,7 +2,6 @@
 
 ## Requirements
 
-- PowerShell
 - Azure CLI
 - Terraform
 - Databricks CLI
@@ -64,3 +63,4 @@ terraform state show azurerm_resource_group.example
 - Make diagram
 - Deploy networks & databricks environment using terraform
 - Databricks CLI tutorial
+- Connect via rotating sas token to state

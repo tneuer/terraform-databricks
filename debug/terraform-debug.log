@@ -1,0 +1,210 @@
+2023-12-15T14:18:37.553+0100 [ERROR] provider.terraform-provider-azurerm_v3.85.0_x5: Response contains error diagnostic: @module=sdk.proto diagnostic_detail="" diagnostic_summary="Can not parse \"custom_parameters.0.public_subnet_network_security_group_association_id\" as a resource id: Cannot parse Azure ID: parse \"azurerm_subnet_network_security_group_association.public.id\": invalid URI for request" diagnostic_attribute="AttributeName(\"custom_parameters\").ElementKeyInt(0).AttributeName(\"public_subnet_network_security_group_association_id\")" tf_proto_version=5.4 tf_req_id=14727bbe-de73-bf3a-38c0-a592bcb39b52 diagnostic_severity=ERROR tf_resource_type=azurerm_databricks_workspace @caller=github.com/hashicorp/terraform-plugin-go@v0.19.0/tfprotov5/internal/diag/diagnostics.go:58 tf_provider_addr=provider tf_rpc=ValidateResourceTypeConfig timestamp="2023-12-15T14:18:37.553+0100"
+2023-12-15T14:18:37.553+0100 [ERROR] provider.terraform-provider-azurerm_v3.85.0_x5: Response contains error diagnostic: @caller=github.com/hashicorp/terraform-plugin-go@v0.19.0/tfprotov5/internal/diag/diagnostics.go:58 diagnostic_attribute="AttributeName(\"custom_parameters\").ElementKeyInt(0).AttributeName(\"private_subnet_network_security_group_association_id\")" tf_provider_addr=provider @module=sdk.proto tf_proto_version=5.4 diagnostic_detail="" diagnostic_severity=ERROR diagnostic_summary="Can not parse \"custom_parameters.0.private_subnet_network_security_group_association_id\" as a resource id: Cannot parse Azure ID: parse \"azurerm_subnet_network_security_group_association.private.id\": invalid URI for request" tf_req_id=14727bbe-de73-bf3a-38c0-a592bcb39b52 tf_resource_type=azurerm_databricks_workspace tf_rpc=ValidateResourceTypeConfig timestamp="2023-12-15T14:18:37.553+0100"
+2023-12-15T14:18:37.553+0100 [ERROR] provider.terraform-provider-azurerm_v3.85.0_x5: Response contains error diagnostic: @caller=github.com/hashicorp/terraform-plugin-go@v0.19.0/tfprotov5/internal/diag/diagnostics.go:58 @module=sdk.proto diagnostic_attribute="AttributeName(\"custom_parameters\").ElementKeyInt(0).AttributeName(\"virtual_network_id\")" diagnostic_severity=ERROR diagnostic_detail="" tf_proto_version=5.4 tf_provider_addr=provider
+  diagnostic_summary=
+  | parsing "azurerm_virtual_network.vnet.id": parsing the VirtualNetwork ID: the number of segments didn't match
+  | 
+  | Expected a VirtualNetwork ID that matched (containing 8 segments):
+  | 
+  | > /subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue
+  | 
+  | However this value was provided (which was parsed into 0 segments):
+  | 
+  | > azurerm_virtual_network.vnet.id
+  | 
+  | The following Segments are expected:
+  | 
+  | * Segment 0 - this should be the literal value "subscriptions"
+  | * Segment 1 - this should be the UUID of the Azure Subscription
+  | * Segment 2 - this should be the literal value "resourceGroups"
+  | * Segment 3 - this should be the name of the Resource Group
+  | * Segment 4 - this should be the literal value "providers"
+  | * Segment 5 - this should be the name of the Resource Provider [for example 'Microsoft.Network']
+  | * Segment 6 - this should be the literal value "virtualNetworks"
+  | * Segment 7 - this should be the user specified value for this virtualNetwork [for example "virtualNetworksValue"]
+  | 
+  | The following Segments were parsed:
+  | 
+  | * Segment 0 - not found
+  | * Segment 1 - not found
+  | * Segment 2 - not found
+  | * Segment 3 - not found
+  | * Segment 4 - not found
+  | * Segment 5 - not found
+  | * Segment 6 - not found
+  | * Segment 7 - not found
+   tf_req_id=14727bbe-de73-bf3a-38c0-a592bcb39b52 tf_resource_type=azurerm_databricks_workspace tf_rpc=ValidateResourceTypeConfig timestamp="2023-12-15T14:18:37.553+0100"
+2023-12-15T14:18:37.554+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1" error: Can not parse "custom_parameters.0.public_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.public.id": invalid URI for request
+2023-12-15T14:18:37.554+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1" error: Can not parse "custom_parameters.0.private_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.private.id": invalid URI for request
+2023-12-15T14:18:37.554+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1" error: parsing "azurerm_virtual_network.vnet.id": parsing the VirtualNetwork ID: the number of segments didn't match
+
+Expected a VirtualNetwork ID that matched (containing 8 segments):
+
+> /subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue
+
+However this value was provided (which was parsed into 0 segments):
+
+> azurerm_virtual_network.vnet.id
+
+The following Segments are expected:
+
+* Segment 0 - this should be the literal value "subscriptions"
+* Segment 1 - this should be the UUID of the Azure Subscription
+* Segment 2 - this should be the literal value "resourceGroups"
+* Segment 3 - this should be the name of the Resource Group
+* Segment 4 - this should be the literal value "providers"
+* Segment 5 - this should be the name of the Resource Provider [for example 'Microsoft.Network']
+* Segment 6 - this should be the literal value "virtualNetworks"
+* Segment 7 - this should be the user specified value for this virtualNetwork [for example "virtualNetworksValue"]
+
+The following Segments were parsed:
+
+* Segment 0 - not found
+* Segment 1 - not found
+* Segment 2 - not found
+* Segment 3 - not found
+* Segment 4 - not found
+* Segment 5 - not found
+* Segment 6 - not found
+* Segment 7 - not found
+2023-12-15T14:18:37.554+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1 (expand)" error: Can not parse "custom_parameters.0.public_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.public.id": invalid URI for request
+2023-12-15T14:18:37.555+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1 (expand)" error: Can not parse "custom_parameters.0.private_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.private.id": invalid URI for request
+2023-12-15T14:18:37.555+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1 (expand)" error: parsing "azurerm_virtual_network.vnet.id": parsing the VirtualNetwork ID: the number of segments didn't match
+
+Expected a VirtualNetwork ID that matched (containing 8 segments):
+
+> /subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue
+
+However this value was provided (which was parsed into 0 segments):
+
+> azurerm_virtual_network.vnet.id
+
+The following Segments are expected:
+
+* Segment 0 - this should be the literal value "subscriptions"
+* Segment 1 - this should be the UUID of the Azure Subscription
+* Segment 2 - this should be the literal value "resourceGroups"
+* Segment 3 - this should be the name of the Resource Group
+* Segment 4 - this should be the literal value "providers"
+* Segment 5 - this should be the name of the Resource Provider [for example 'Microsoft.Network']
+* Segment 6 - this should be the literal value "virtualNetworks"
+* Segment 7 - this should be the user specified value for this virtualNetwork [for example "virtualNetworksValue"]
+
+The following Segments were parsed:
+
+* Segment 0 - not found
+* Segment 1 - not found
+* Segment 2 - not found
+* Segment 3 - not found
+* Segment 4 - not found
+* Segment 5 - not found
+* Segment 6 - not found
+* Segment 7 - not found
+2023-12-15T14:27:40.051+0100 [ERROR] provider.terraform-provider-azurerm_v3.85.0_x5: Response contains error diagnostic: diagnostic_detail="" tf_resource_type=azurerm_databricks_workspace @module=sdk.proto tf_req_id=db726cfe-561c-8068-eca5-8fc525498eb4 tf_rpc=ValidateResourceTypeConfig tf_proto_version=5.4 diagnostic_severity=ERROR diagnostic_summary="Can not parse \"custom_parameters.0.private_subnet_network_security_group_association_id\" as a resource id: Cannot parse Azure ID: parse \"azurerm_subnet_network_security_group_association.private.id\": invalid URI for request" tf_provider_addr=provider @caller=github.com/hashicorp/terraform-plugin-go@v0.19.0/tfprotov5/internal/diag/diagnostics.go:58 diagnostic_attribute="AttributeName(\"custom_parameters\").ElementKeyInt(0).AttributeName(\"private_subnet_network_security_group_association_id\")" timestamp="2023-12-15T14:27:40.051+0100"
+2023-12-15T14:27:40.051+0100 [ERROR] provider.terraform-provider-azurerm_v3.85.0_x5: Response contains error diagnostic: diagnostic_detail=""
+  diagnostic_summary=
+  | parsing "azurerm_virtual_network.vnet.id": parsing the VirtualNetwork ID: the number of segments didn't match
+  | 
+  | Expected a VirtualNetwork ID that matched (containing 8 segments):
+  | 
+  | > /subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue
+  | 
+  | However this value was provided (which was parsed into 0 segments):
+  | 
+  | > azurerm_virtual_network.vnet.id
+  | 
+  | The following Segments are expected:
+  | 
+  | * Segment 0 - this should be the literal value "subscriptions"
+  | * Segment 1 - this should be the UUID of the Azure Subscription
+  | * Segment 2 - this should be the literal value "resourceGroups"
+  | * Segment 3 - this should be the name of the Resource Group
+  | * Segment 4 - this should be the literal value "providers"
+  | * Segment 5 - this should be the name of the Resource Provider [for example 'Microsoft.Network']
+  | * Segment 6 - this should be the literal value "virtualNetworks"
+  | * Segment 7 - this should be the user specified value for this virtualNetwork [for example "virtualNetworksValue"]
+  | 
+  | The following Segments were parsed:
+  | 
+  | * Segment 0 - not found
+  | * Segment 1 - not found
+  | * Segment 2 - not found
+  | * Segment 3 - not found
+  | * Segment 4 - not found
+  | * Segment 5 - not found
+  | * Segment 6 - not found
+  | * Segment 7 - not found
+   tf_resource_type=azurerm_databricks_workspace tf_rpc=ValidateResourceTypeConfig @caller=github.com/hashicorp/terraform-plugin-go@v0.19.0/tfprotov5/internal/diag/diagnostics.go:58 @module=sdk.proto diagnostic_attribute="AttributeName(\"custom_parameters\").ElementKeyInt(0).AttributeName(\"virtual_network_id\")" tf_provider_addr=provider diagnostic_severity=ERROR tf_proto_version=5.4 tf_req_id=db726cfe-561c-8068-eca5-8fc525498eb4 timestamp="2023-12-15T14:27:40.051+0100"
+2023-12-15T14:27:40.051+0100 [ERROR] provider.terraform-provider-azurerm_v3.85.0_x5: Response contains error diagnostic: @caller=github.com/hashicorp/terraform-plugin-go@v0.19.0/tfprotov5/internal/diag/diagnostics.go:58 diagnostic_attribute="AttributeName(\"custom_parameters\").ElementKeyInt(0).AttributeName(\"public_subnet_network_security_group_association_id\")" diagnostic_detail="" tf_provider_addr=provider tf_proto_version=5.4 tf_req_id=db726cfe-561c-8068-eca5-8fc525498eb4 tf_resource_type=azurerm_databricks_workspace tf_rpc=ValidateResourceTypeConfig @module=sdk.proto diagnostic_severity=ERROR diagnostic_summary="Can not parse \"custom_parameters.0.public_subnet_network_security_group_association_id\" as a resource id: Cannot parse Azure ID: parse \"azurerm_subnet_network_security_group_association.public.id\": invalid URI for request" timestamp="2023-12-15T14:27:40.051+0100"
+2023-12-15T14:27:40.051+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1" error: Can not parse "custom_parameters.0.private_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.private.id": invalid URI for request
+2023-12-15T14:27:40.051+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1" error: parsing "azurerm_virtual_network.vnet.id": parsing the VirtualNetwork ID: the number of segments didn't match
+
+Expected a VirtualNetwork ID that matched (containing 8 segments):
+
+> /subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue
+
+However this value was provided (which was parsed into 0 segments):
+
+> azurerm_virtual_network.vnet.id
+
+The following Segments are expected:
+
+* Segment 0 - this should be the literal value "subscriptions"
+* Segment 1 - this should be the UUID of the Azure Subscription
+* Segment 2 - this should be the literal value "resourceGroups"
+* Segment 3 - this should be the name of the Resource Group
+* Segment 4 - this should be the literal value "providers"
+* Segment 5 - this should be the name of the Resource Provider [for example 'Microsoft.Network']
+* Segment 6 - this should be the literal value "virtualNetworks"
+* Segment 7 - this should be the user specified value for this virtualNetwork [for example "virtualNetworksValue"]
+
+The following Segments were parsed:
+
+* Segment 0 - not found
+* Segment 1 - not found
+* Segment 2 - not found
+* Segment 3 - not found
+* Segment 4 - not found
+* Segment 5 - not found
+* Segment 6 - not found
+* Segment 7 - not found
+2023-12-15T14:27:40.052+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1" error: Can not parse "custom_parameters.0.public_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.public.id": invalid URI for request
+2023-12-15T14:27:40.052+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1 (expand)" error: Can not parse "custom_parameters.0.private_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.private.id": invalid URI for request
+2023-12-15T14:27:40.052+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1 (expand)" error: parsing "azurerm_virtual_network.vnet.id": parsing the VirtualNetwork ID: the number of segments didn't match
+
+Expected a VirtualNetwork ID that matched (containing 8 segments):
+
+> /subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue
+
+However this value was provided (which was parsed into 0 segments):
+
+> azurerm_virtual_network.vnet.id
+
+The following Segments are expected:
+
+* Segment 0 - this should be the literal value "subscriptions"
+* Segment 1 - this should be the UUID of the Azure Subscription
+* Segment 2 - this should be the literal value "resourceGroups"
+* Segment 3 - this should be the name of the Resource Group
+* Segment 4 - this should be the literal value "providers"
+* Segment 5 - this should be the name of the Resource Provider [for example 'Microsoft.Network']
+* Segment 6 - this should be the literal value "virtualNetworks"
+* Segment 7 - this should be the user specified value for this virtualNetwork [for example "virtualNetworksValue"]
+
+The following Segments were parsed:
+
+* Segment 0 - not found
+* Segment 1 - not found
+* Segment 2 - not found
+* Segment 3 - not found
+* Segment 4 - not found
+* Segment 5 - not found
+* Segment 6 - not found
+* Segment 7 - not found
+2023-12-15T14:27:40.052+0100 [ERROR] vertex "module.db_workspace.azurerm_databricks_workspace.db_workspace1 (expand)" error: Can not parse "custom_parameters.0.public_subnet_network_security_group_association_id" as a resource id: Cannot parse Azure ID: parse "azurerm_subnet_network_security_group_association.public.id": invalid URI for request
+2023-12-15T14:28:08.602+0100 [ERROR] vertex "module.private_endpoints.var.databricks_workspace_id" error: Unsupported attribute
+2023-12-15T14:28:08.602+0100 [ERROR] vertex "module.private_endpoints.var.databricks_workspace_id (expand)" error: Unsupported attribute
+2023-12-15T14:34:01.406+0100 [ERROR] vertex "azurerm_resource_group.rg (import id \"/subscriptions/6d2123d2-a91f-400c-88df-fcc0d0495bd7/resourceGroups/terraform-databricks-rg\")" error: Resource already managed by Terraform
+2023-12-15T14:34:01.406+0100 [ERROR] vertex "azurerm_resource_group.rg (expand)" error: Resource already managed by Terraform
+2023-12-15T14:34:11.119+0100 [ERROR] vertex "azurerm_key_vault.tfstatekv (import id \"/subscriptions/6d2123d2-a91f-400c-88df-fcc0d0495bd7/resourceGroups/terraform-databricks-rg/providers/Microsoft.KeyVault/vaults/terraform-databricks-kv\")" error: Resource already managed by Terraform
+2023-12-15T14:34:11.119+0100 [ERROR] vertex "azurerm_key_vault.tfstatekv (expand)" error: Resource already managed by Terraform

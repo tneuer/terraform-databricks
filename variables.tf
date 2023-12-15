@@ -10,24 +10,38 @@ variable "environment" {
 }
 
 variable "location" {
-  type = string
+  type        = string
+  description = "The Azure Region to deploy resources."
+
+  validation {
+    condition     = can(regex("^switzerland", var.location))
+    error_message = "Unsupported Azure Region specified. Only Switzerland Regions are supported."
+  }
 }
 
 variable "project" {
   type = string
 }
 
-# RESOURCES
-
-variable "vnet_cidr_range" {
-  type = string
-}
+# AZURE 
 
 variable "rg_name" {
   type = string
 }
 
 variable "key_vault_name" {
+  type = string
+}
+
+# VNETS
+
+variable "vnet_cidr_range" {
+  type = string
+}
+
+# DB WORKSPACE
+
+variable "db_storage_account_name" {
   type = string
 }
 
@@ -42,6 +56,6 @@ locals {
     environment = var.environment
     project     = var.project
     source      = "terraform"
-    Owner       = lookup(data.external.me.result, "name")
+    creator     = lookup(data.external.me.result, "name")
   }
 }
