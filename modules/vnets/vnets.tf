@@ -43,23 +43,23 @@ resource "azurerm_network_security_rule" "azfrontdoor" {
   network_security_group_name = azurerm_network_security_group.db_nsg.name
 }
 
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
+# data "http" "myip" {
+#   url = "http://ipv4.icanhazip.com"
+# }${chomp(data.http.myip.body)}/32
 
-resource "azurerm_network_security_rule" "az_allow_my_ip" {
-  name                        = "AllowMyIP"
-  priority                    = 150
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "443"
-  destination_port_range      = "*"
-  source_address_prefix       = "${chomp(data.http.myip.body)}/32"
-  destination_address_prefix  = "*"
-  resource_group_name         = var.rg_name
-  network_security_group_name = azurerm_network_security_group.db_nsg.name
-}
+# resource "azurerm_network_security_rule" "az_allow_my_ip" {
+#   name                        = "AllowMyIP"
+#   priority                    = 150
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "*"
+#   source_port_range           = "443"
+#   destination_port_range      = "*"
+#   source_address_prefix       = "${chomp(data.http.myip.body)}/32"
+#   destination_address_prefix  = "*"
+#   resource_group_name         = var.rg_name
+#   network_security_group_name = azurerm_network_security_group.db_nsg.name
+# }
 
 resource "azurerm_subnet" "db_public" {
   name                 = format("%s%s", "db-public-subnet-", var.project)
@@ -127,34 +127,69 @@ resource "azurerm_subnet" "pl_subnet" {
   private_endpoint_network_policies_enabled = true
 }
 
-output "vnet_id" {
-  value = azurerm_virtual_network.vnet.id
+
+### Virtual Machine
+resource "azurerm_subnet" "vm_windows_server" {
+  name                 = format("%s%s", "vm-windows-server-", var.project)
+  resource_group_name  = var.rg_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = [cidrsubnet(var.vnet_cidr_range, 2, 3)]
 }
 
-output "db_public_subnet_id" {
-  value = azurerm_subnet.db_public.id
+resource "azurerm_public_ip" "vm_windows_server" {
+  name                = format("%s%s", "vm-windows-server-public-ip-", var.project)
+  location            = var.location
+  resource_group_name = var.rg_name
+  allocation_method   = "Dynamic"
 }
 
-output "db_private_subnet_id" {
-  value = azurerm_subnet.db_private.id
+data "http" "myip" {
+  url = "http://ipv4.icanhazip.com"
 }
 
-output "db_public_subnet_name" {
-  value = azurerm_subnet.db_public.name
+resource "azurerm_network_security_group" "vm_windows_server" {
+  name                = format("%s%s", "vm-windows-server-nsg-", var.project)
+  location            = var.location
+  resource_group_name = var.rg_name
+
+  security_rule {
+    name                       = "RDP"
+    priority                   = 1000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "3389"
+    source_address_prefix      = "${chomp(data.http.myip.body)}/32"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "web"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
-output "db_private_subnet_name" {
-  value = azurerm_subnet.db_private.name
+resource "azurerm_network_interface" "vm_windows_server" {
+  name                = format("%s%s", "vm-windows-server-nic-", var.project)
+  location            = var.location
+  resource_group_name = var.rg_name
+
+  ip_configuration {
+    name                          = "my_nic_configuration"
+    subnet_id                     = azurerm_subnet.vm_windows_server.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.vm_windows_server.id
+  }
 }
 
-output "db_public_subnet_network_security_group_association_id" {
-  value = azurerm_subnet_network_security_group_association.public.id
-}
-
-output "db_private_subnet_network_security_group_association_id" {
-  value = azurerm_subnet_network_security_group_association.private.id
-}
-
-output "pl_subnet_id" {
-  value = azurerm_subnet.pl_subnet.id
+resource "azurerm_network_interface_security_group_association" "vm_windows_server" {
+  network_interface_id      = azurerm_network_interface.vm_windows_server.id
+  network_security_group_id = azurerm_network_security_group.vm_windows_server.id
 }

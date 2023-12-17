@@ -75,6 +75,16 @@ module "web_auth" {
   tags                         = local.tags
 }
 
-output "vnets" {
-  value = module.vnets
+module "vm_deploy" {
+  source   = "./modules/vm_deploy"
+  rg_name  = var.rg_name
+  location = var.location
+  project  = var.project
+  vnet_id  = module.vnets.vnet_id
+  nic      = module.vnets.windows_server_nic
+  tags     = local.tags
+}
+
+output "vm_deploy" {
+  value = module.vm_deploy
 }

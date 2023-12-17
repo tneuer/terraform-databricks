@@ -1,12 +1,12 @@
 resource "azurerm_databricks_workspace" "db_workspace1" {
-  name                                  = format("%s%s", var.project, "-workspace")
-  resource_group_name                   = var.rg_name
-  location                              = var.location
-  sku                                   = "premium"
-  tags                                  = var.tags
-  public_network_access_enabled         = true # false
-  # network_security_group_rules_required = "NoAzureDatabricksRules"
-  customer_managed_key_enabled          = true
+  name                          = format("%s%s", var.project, "-workspace")
+  resource_group_name           = var.rg_name
+  location                      = var.location
+  sku                           = "premium"
+  tags                          = var.tags
+  public_network_access_enabled = false
+  network_security_group_rules_required = "NoAzureDatabricksRules"
+  customer_managed_key_enabled = true
   custom_parameters {
     no_public_ip                                         = true
     virtual_network_id                                   = var.vnet_id
